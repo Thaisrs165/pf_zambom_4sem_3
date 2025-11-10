@@ -36,7 +36,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         
-      - name: Build and push image
+      - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -55,19 +55,27 @@ jobs:
      
             docker system prune -af
 
-      
+          
             docker network inspect rede >/dev/null 2>&1 || docker network create rede
 
-
+        
             docker stop filmes || true
             docker rm --force filmes || true
 
+     
+            docker ps | grep mongo || docker run -d \
+              --name mongo \
+              --network rede \
+              -p 27017:27017 \
+              -v mongo_data:/data/db \
+              mongo
 
+  
             docker run -d -p 8080:8080 \
               -e spring_profiles_active=prod \
-              -e MONGO_URI=${{ secrets.MONGO_URI }} \
+              -e MONGO_URI=mongodb://mongo:27017/filmes \
               --network=rede \
               --name filmes \
               thaisrs3/filme-pf-ci:${{ github.sha }}
 
-   
+ 
