@@ -52,8 +52,8 @@ jobs:
           key: ${{ secrets.KEY_TEST }}
           port: 22
           script: |
-            docker stop filmes
-            docker rm --force filmes
+            docker stop filmes || true
+            docker rm --force filmes || true
             docker run -d -p 8080:8080 \
               -e spring_profiles_active=prod \
               -e MONGO_URI=${{ secrets.MONGO_URI }} \
