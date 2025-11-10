@@ -4,25 +4,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FilmeService {
 
-    @Autowired
-    private FilmeRepository filmeRepository;
+    private final FilmeRepository filmeRepository;
 
+    public FilmeService(FilmeRepository filmeRepository) {
+        this.filmeRepository = filmeRepository;
+    }
 
-    public List<Filme> getFilmes() {
+    public List<Filme> listarFilmes() {
         return filmeRepository.findAll();
     }
 
-    public Filme createFilme(Filme filme) {
+    public Filme salvarFilme(Filme filme) {
         return filmeRepository.save(filme);
     }
 
-    public Filme getFilme(Integer id) {
-        return filmeRepository
-                .findById(id)
-                .orElseThrow(() -> new RuntimeException("Filme não encontrado"));
+    public Optional<Filme> buscarPorId(String id) {
+        return filmeRepository.findById(id);
+    }
+
+    public void deletarFilme(String id) {
+        filmeRepository.deleteById(id);
     }
 }

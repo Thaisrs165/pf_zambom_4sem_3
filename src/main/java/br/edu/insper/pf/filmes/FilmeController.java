@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/filmes")
@@ -14,16 +15,21 @@ public class FilmeController {
 
     @GetMapping
     public List<Filme> getFilmes() {
-        return filmeService.getFilmes();
+        return filmeService.listarFilmes();
     }
 
     @PostMapping
     public Filme createFilme(@RequestBody Filme filme) {
-        return filmeService.createFilme(filme);
+        return filmeService.salvarFilme(filme);
     }
 
     @GetMapping("/{id}")
-    public Filme getFilme(@PathVariable Integer id) {
-        return filmeService.getFilme(id);
+    public Optional<Filme> getFilme(@PathVariable String id) {
+        return filmeService.buscarPorId(id);
+    }
+
+    @GetMapping("/{id}")
+    public void deletarFilme(@PathVariable String id){
+        filmeService.deletarFilme(id);
     }
 }
