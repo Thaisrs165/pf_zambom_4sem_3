@@ -25,7 +25,7 @@ jobs:
           settings-path: ${{ github.workspace }}
           
       - name: Build with Maven
-        run: mvn clean install
+        run: mvn clean package -DskipTests
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -36,7 +36,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         
-      - name: Build and push
+      - name: Build and push image
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -44,7 +44,7 @@ jobs:
           push: true
           tags: thaisrs3/filme-pf-ci:${{ github.sha }}
 
-      - name: executing remote ssh commands using password
+      - name: Deploy to AWS EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_TEST }}
@@ -52,11 +52,22 @@ jobs:
           key: ${{ secrets.KEY_TEST }}
           port: 22
           script: |
+     
+            docker system prune -af
+
+            echo "🔧 Garantindo que a rede 'rede' exista..."
+            docker network inspect rede >/dev/null 2>&1 || docker network create rede
+
+
             docker stop filmes || true
             docker rm --force filmes || true
+
+            echo "🐳 Subindo novo container..."
             docker run -d -p 8080:8080 \
               -e spring_profiles_active=prod \
               -e MONGO_URI=${{ secrets.MONGO_URI }} \
-              -e MONGO_HOST=mongo \
-              --network=rede --name filmes \
+              --network=rede \
+              --name filmes \
               thaisrs3/filme-pf-ci:${{ github.sha }}
+
+   
