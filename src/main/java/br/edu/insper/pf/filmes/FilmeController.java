@@ -1,35 +1,39 @@
 package br.edu.insper.pf.filmes;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/filmes")
 public class FilmeController {
 
-    @Autowired
-    private FilmeService filmeService;
+    private final FilmeService filmeService;
+
+    public FilmeController(FilmeService filmeService) {
+        this.filmeService = filmeService;
+    }
+
 
     @GetMapping
-    public List<Filme> getFilmes() {
+    public List<Filme> listarFilmes() {
         return filmeService.listarFilmes();
     }
 
+
+    @GetMapping("/{id}")
+    public Filme getFilme(@PathVariable String id) {
+        return filmeService.buscarPorId(id).orElse(null);
+    }
+
+
     @PostMapping
-    public Filme createFilme(@RequestBody Filme filme) {
+    public Filme criarFilme(@RequestBody Filme filme) {
         return filmeService.salvarFilme(filme);
     }
 
-    @GetMapping("/{id}")
-    public Optional<Filme> getFilme(@PathVariable String id) {
-        return filmeService.buscarPorId(id);
-    }
 
-    @GetMapping("/{id}")
-    public void deletarFilme(@PathVariable String id){
+    @DeleteMapping("/{id}")
+    public void deletarFilme(@PathVariable String id) {
         filmeService.deletarFilme(id);
     }
 }
