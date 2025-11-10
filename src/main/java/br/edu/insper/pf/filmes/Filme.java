@@ -1,21 +1,19 @@
 package br.edu.insper.pf.filmes;
 
 import org.springframework.data.annotation.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document(collection = "filmes")
 public class Filme {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     private String nome;
     private String descricao;
-    private Integer nota;
     private String diretor;
+    private Double nota;
+
 
     public String getId() {
         return id;
@@ -41,19 +39,19 @@ public class Filme {
         this.descricao = descricao;
     }
 
-    public Integer getNota() {
-        return nota;
-    }
-
-    public void setNota(Integer nota) {
-        this.nota = nota;
-    }
-
     public String getDiretor() {
         return diretor;
     }
 
     public void setDiretor(String diretor) {
         this.diretor = diretor;
+    }
+
+    public Double getNota() {
+        return nota;
+    }
+
+    public void setNota(Double nota) {
+        this.nota = nota;
     }
 }
