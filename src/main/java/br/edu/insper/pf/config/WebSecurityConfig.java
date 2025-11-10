@@ -14,34 +14,30 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebSecurity
 public class WebSecurityConfig implements WebMvcConfigurer {
 
-    // 🔓 Libera CORS para permitir que o front (Vite) acesse o back
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:5173") // URL do seu front-end
+                .allowedOrigins("http://localhost:5173") // seu front
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
 
-    // 🔐 Configuração de segurança com Auth0
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(auth -> auth
-                        // Endpoints públicos (se quiser deixar alguns abertos)
-                        .requestMatchers("/public/**").permitAll()
-                        // Todos os outros exigem autenticação via JWT
-                        .anyRequest().authenticated()
-                )
-                // Desativa CSRF (necessário para APIs REST)
                 .csrf(AbstractHttpConfigurer::disable)
-                // Ativa o CORS que configuramos acima
                 .cors(Customizer.withDefaults())
-                // Configura o Resource Server para validar tokens JWT do Auth0
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(Customizer.withDefaults())
-                );
+                .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers("/filmes/**").permitAll()
+
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/filmes/**").authenticated()
+
+                        .anyRequest().permitAll()
+                )
+
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
         return http.build();
     }
