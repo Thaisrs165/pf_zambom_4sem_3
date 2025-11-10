@@ -42,7 +42,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: thaisrs3/pessoa-exercicio-ci:${{ github.sha }}
+          tags: thaisrs3/filme-pf-ci:${{ github.sha }}
 
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
@@ -52,11 +52,11 @@ jobs:
           key: ${{ secrets.KEY_TEST }}
           port: 22
           script: |
-            docker stop pessoas
-            docker rm --force pessoas
+            docker stop filmes
+            docker rm --force filmes
             docker run -d -p 8080:8080 \
               -e spring_profiles_active=prod \
               -e MONGO_URI=${{ secrets.MONGO_URI }} \
               -e MONGO_HOST=mongo \
-              --network=rede --name pessoas \
-              thaisrs3/pessoa-exercicio-ci:${{ github.sha }}
+              --network=rede --name filmes \
+              thaisrs3/filme-pf-ci:${{ github.sha }}
