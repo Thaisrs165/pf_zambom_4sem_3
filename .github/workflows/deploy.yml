@@ -55,14 +55,14 @@ jobs:
      
             docker system prune -af
 
-            echo "🔧 Garantindo que a rede 'rede' exista..."
+      
             docker network inspect rede >/dev/null 2>&1 || docker network create rede
 
 
             docker stop filmes || true
             docker rm --force filmes || true
 
-            echo "🐳 Subindo novo container..."
+
             docker run -d -p 8080:8080 \
               -e spring_profiles_active=prod \
               -e MONGO_URI=${{ secrets.MONGO_URI }} \
